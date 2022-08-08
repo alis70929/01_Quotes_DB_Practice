@@ -258,3 +258,26 @@ input {
     padding: 10px;
     border: solid 1px #721a1a;
 }
+
+.submit::-moz-focus-inner{
+    border: 0;
+}
+
+.submit{
+    font-family: FontAwesome, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    position: relative;
+    width: 45px;
+    font-size: 14px;
+
+    left: -5px;
+    background-color: #636263;
+    color: #d6d3d7;
+    border: 1px solid #000;
+    border-radius: 0 5px 5px 0;
+    display: inline-block;
+    padding: 10px;
+}
+
+input[type="submit"]:hover {
+    background-color: #000;
+}

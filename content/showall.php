@@ -8,7 +8,6 @@
     $find_rs = mysqli_fetch_assoc($find_query);
 
     do {
-
         $quote = preg_replace('/[^A-Za-z0-9.,?\s\'\-]/', ' ',$find_rs['Quote'] );
 
         include("functions/get_author.php");
