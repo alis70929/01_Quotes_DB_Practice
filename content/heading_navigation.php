@@ -35,8 +35,14 @@
             {
 
                 ?>
-                    Add Quote &nbsp; &nbsp;
-                    Log Out
+                    <a href="index.php?page=../admin/newquote" title="Add A 
+                    New Quote"><i class="fa fa-plus fa-2x"></i></a> 
+                    
+                    &nbsp; &nbsp;
+                    
+                    <a href="index.php?page=../admin/logout" title="Log out">
+                        <i class="fa fa-sign-out fa-2x"></i>
+                    </a>
 
                 <?php
             }
@@ -45,7 +51,9 @@
 
                 ?>
                 
-                <a href="index.php?page=../admin/login">Log In</a>
+                <a href="index.php?page=../admin/login" title="Log In">
+                    <i class="fa fa-sign-in fa-2x"></i>
+                </a>
 
                 <?php
             }

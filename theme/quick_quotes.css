@@ -279,5 +279,57 @@ input {
 }
 
 input[type="submit"]:hover {
-    background-color: #000;
+    background-color: rgb(1, 125, 226);
+}
+
+input {
+    font-size: 14px;
+    padding: 10px;
+    display: inline-block;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 95%;
+}
+
+input.short {
+    width:100px;
+}
+select{
+    height:40px;
+    padding: 5px;
+}
+
+input.tag-error[type=text] {
+    background-color: #ff9e9e;
+}
+
+input.tag-ok[type=text]{
+    background-color: #fff;
+}
+
+.form-ok{
+    background-color: #fff;
+}
+
+.form-error{
+    background-color: #ff9e9e;
+}
+
+.no-error{
+    display: none;
+}
+
+.error-text{
+    color: darkred;
+}
+
+textarea,
+input[type=text] {
+    font-family: 'Lato', sans-serif;
+    padding: 10px;
+}
+
+textarea {
+    width: 90%;
+    max-width: 700px;
 }
