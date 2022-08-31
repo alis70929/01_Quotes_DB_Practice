@@ -24,7 +24,27 @@ foreach($all_subjects as $subject)
     <?php
     }// if subject end
     unset($subject);
+
+    
 } // for each end
+
+if (isset($_SESSION['admin'])){
+    ?>
+        <div class="edit-tools">
+            <a href="index.php?page=../admin/editquote&ID=<?php echo $find_rs['ID']; ?>"
+            title="Edit quote"><i class="fa fa-edit fa-2x"></i></a>
+
+            &nbsp; &nbsp;
+
+            <a href="index.php?page=../admin/deletequote_confirm&ID=<?php echo $find_rs['ID']?>"
+            title="Delete Quote"><i class="fa fa-trash fa-2x"></i></a>
+        </div>
+    
+    
+    
+    
+    <?php
+}
 
 
 ?>
