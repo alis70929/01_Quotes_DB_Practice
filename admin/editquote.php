@@ -3,21 +3,40 @@
     if(isset($_SESSION['admin']))
     {
         echo "Session Valid";
-        $author_ID = $_SESSION['Add_Quote'];
-        echo "Author_ID: ".$author_ID; 
+        $ID = $_REQUEST['ID'];
 
-        if($author_ID=="unknown"){
+        $find_sql = "SELECT * FROM `quotes` 
+        JOIN author ON (`author`.`Author_ID` = `quotes`.`Author_ID`)  
+        WHERE `quotes`.`ID` = $ID";
+        $find_query = mysqli_query($dbconnect,$find_sql);
+        $find_rs = mysqli_fetch_assoc($find_query);
 
-            $all_countries_sql = ""
-        }
+        include("content/functions/get_author.php");
+        $current_author = $full_name;
+
+
         $all_tags_sql = "SELECT * FROM `subject` ORDER BY `subject`.`Subject` ASC";
         $all_subjects = autocomplete_list($dbconnect,$all_tags_sql,"Subject");
 
-        $quote= "Please Type the quote here";
-        $notes = "";
-        $tag_1 = "";
-        $tag_2 = "";
-        $tag_3 = "";
+        $quote= $find_rs['Quote'];
+        $notes = $find_rs['Quote'];
+
+        $subject1_ID = $find_rs['Subject1_ID'];
+        $subject2_ID = $find_rs['Subject2_ID'];
+        $subject3_ID = $find_rs['Subject3_ID'];
+
+        $tag_1_rs = get_rs($dbconnect,
+        "SELECT * FROM `subject` WHERE `Subject_ID` = $subject1_ID");
+        $tag_1 = $tag_1_rs['Subject'];
+
+        $tag_2_rs = get_rs($dbconnect, 
+        "SELECT * FROM `subject` WHERE `Subject_ID` = $subject2_ID");
+        $tag_2 = $tag_2_rs['Subject'];
+
+        $tag_3_rs = get_rs($dbconnect,
+        "SELECT * FROM `subject` WHERE `Subject_ID` = $subject3_ID");
+        $tag_3 = $tag_3_rs['Subject'];
+ 
 
         $tag_1_ID = $tag_2_ID = $tag_3_ID = 0;
 
@@ -29,6 +48,7 @@
 
         if($_SERVER["REQUEST_METHOD"] == "POST")
         {
+            $author_ID = mysqli_real_escape_string($dbconnect, $_POST['author']);
             $quote = mysqli_real_escape_string($dbconnect, $_POST['quote']);
             $notes = mysqli_real_escape_string($dbconnect, $_POST['notes']);
             $tag_1 = mysqli_real_escape_string($dbconnect, $_POST['Subject_1']);
@@ -51,9 +71,11 @@
                 $subjectID_2 = get_ID($dbconnect,'subject', 'Subject_ID',"Subject",$tag_2);
                 $subjectID_3 = get_ID($dbconnect,'subject', 'Subject_ID',"Subject",$tag_3);
 
-                $addentry_sql = "INSERT INTO `quotes` (`ID`, `Author_ID`, `Quote`, `Notes`, `Subject1_ID`, `Subject2_ID`, `Subject3_ID`) 
-                VALUES (NULL, '$author_ID', '$quote', '$notes', '$subjectID_1', '$subjectID_2', '$subjectID_3')";
-                $addentry_query = mysqli_query($dbconnect,$addentry_sql);
+                $editentry_sql = "UPDATE `quotes` 
+                SET `Author_ID` = '$author_ID', `Quote` = '$quote', `Notes` = '$notes', 
+                `Subject1_ID` = '$subject1_ID', `Subject2_ID` = '$subject2_ID', `Subject3_ID` = '$subject3_ID' 
+                WHERE `quotes`.`ID` = $ID";
+                $editentry_query = mysqli_query($dbconnect,$editentry_sql);
 
                 $get_quote_sql = "SELECT * FROM `quotes` WHERE `Quote`= '$quote'";
                 $get_quote_query = mysqli_query($dbconnect,$get_quote_sql);
@@ -63,7 +85,7 @@
                 $_SESSION['Quote_Success'] = $quote_ID;
                 echo($quote_ID);
                 echo($addentry_sql);
-                header("Location: index.php?page=quote_success");
+                header("Location: index.php?page=editquote_success&quote_ID=".$quote_ID);
             }
         }
 
@@ -75,12 +97,32 @@
 
 ?>
 
-<h1>Add A Quote...</h1>
+<h1>Edit Quote...</h1>
 
 <form autocomplete="off" method="post" action = "<?php echo
-htmlspecialchars($_SERVER["PHP_SELF"]."?page=../admin/add_entry");?>"
+htmlspecialchars($_SERVER["PHP_SELF"]."?page=../admin/editquote&ID=$ID");?>"
 enctype="multipart/form-data">
+    
+    <b>Quote Author</b>
+    <select class="adv gender" name="author">
 
+        <option value="<?php echo $author_ID?>" selected>
+        <?php echo $current_author?></option>
+        <?php
+
+            $all_authors_sql = "SELECT * FROM `author` ORDER BY `author`.`Last` ASC";
+            $all_authors_query = mysqli_query($dbconnect,$all_authors_sql);
+            $all_authors_rs = mysqli_fetch_assoc($all_authors_query);
+            do{
+                $author_full = $all_authors_rs['Last'].",
+                ".$all_authors_rs['First']." ".$all_authors_rs['Middle'];
+                ?>
+                    <option value="<?php echo $all_authors_rs['Author_ID'] ?>"><?php echo $author_full?></option>
+                <?php
+            }   
+            while($all_authors_rs = mysqli_fetch_assoc($all_authors_query))
+        ?>
+    </select>
     <div class="<?php echo $quote_error; ?>">
         This field can't be black
     </div>
@@ -100,7 +142,7 @@ enctype="multipart/form-data">
 
     <div class="autocomplete">
         <input class="<?php echo $tag_1_field ?>" id="subject1" type="text"
-        name="Subject_1" placeholder="Subject 1(Start Typing)...">
+        name="Subject_1" value="<?php echo $tag_1?>" placeholder="Subject 1(Start Typing)...">
 
     </div>
 
@@ -108,7 +150,8 @@ enctype="multipart/form-data">
 
     <div class="autocomplete">
         <input id="subject2" type="text"
-        name="Subject_2" placeholder="Subject 2(Start Typing)...">
+        name="Subject_2" value="<?php echo $tag_2?>"
+        placeholder="Subject 2(Start Typing)...">
 
     </div>
 
@@ -116,7 +159,8 @@ enctype="multipart/form-data">
 
     <div class="autocomplete">
         <input id="subject3" type="text"
-        name="Subject_3" placeholder="Subject 3(Start Typing)...">
+        name="Subject_3" value="<?php echo $tag_3?>"
+        placeholder="Subject 3(Start Typing)...">
 
     </div>
 
