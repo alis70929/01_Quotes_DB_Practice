@@ -44,7 +44,6 @@
         <b>Quote Author:</b> &nbsp;
 
         <select name='author'>
-            <option value="" selected disabled>Select Author</option>
 
             <?php 
             

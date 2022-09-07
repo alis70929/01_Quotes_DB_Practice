@@ -9,7 +9,7 @@
         $all_tags_sql = "SELECT * FROM `subject` ORDER BY `subject`.`Subject` ASC";
         $all_subjects = autocomplete_list($dbconnect,$all_tags_sql,"Subject");
 
-        $quote= "Please Type the quote here";
+        $quote= "";
         $notes = "";
         $tag_1 = "";
         $tag_2 = "";
@@ -30,7 +30,7 @@
             $tag_1 = mysqli_real_escape_string($dbconnect, $_POST['Subject_1']);
             $tag_2 = mysqli_real_escape_string($dbconnect, $_POST['Subject_2']);
             $tag_3 = mysqli_real_escape_string($dbconnect, $_POST['Subject_3']);
-            if($quote == "Please Type the quote here" ){
+            if($quote == "Please Type the quote here" || $quote == "" ){
                 $has_errors = "yes";
                 $quote_error = "error-text";
                 $quote_field = "form-error";
@@ -81,7 +81,7 @@ enctype="multipart/form-data">
         This field can't be black
     </div>
 
-    <textarea class="add-field <?php echo $quote_field?>" name="quote" rows="6" ><?php echo $quote?></textarea>
+    <textarea class="add-field <?php echo $quote_field?>" name="quote" rows="6" placeholder="Please enter quote here"><?php echo $quote?></textarea>
     <br /> <br />
 
 

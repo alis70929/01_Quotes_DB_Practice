@@ -19,23 +19,30 @@
         $all_subjects = autocomplete_list($dbconnect,$all_tags_sql,"Subject");
 
         $quote= $find_rs['Quote'];
-        $notes = $find_rs['Quote'];
-
+        $notes = $find_rs['Notes'];
+        $author_ID = $find_rs['Author_ID'];
         $subject1_ID = $find_rs['Subject1_ID'];
         $subject2_ID = $find_rs['Subject2_ID'];
         $subject3_ID = $find_rs['Subject3_ID'];
 
+        $tag_1 = $tag_2=  $tag_3 ="";
         $tag_1_rs = get_rs($dbconnect,
         "SELECT * FROM `subject` WHERE `Subject_ID` = $subject1_ID");
         $tag_1 = $tag_1_rs['Subject'];
 
         $tag_2_rs = get_rs($dbconnect, 
         "SELECT * FROM `subject` WHERE `Subject_ID` = $subject2_ID");
-        $tag_2 = $tag_2_rs['Subject'];
+        if($tag_2_rs){
+            $tag_2 = $tag_2_rs['Subject'];
+        }
 
         $tag_3_rs = get_rs($dbconnect,
         "SELECT * FROM `subject` WHERE `Subject_ID` = $subject3_ID");
-        $tag_3 = $tag_3_rs['Subject'];
+        if($tag_3_rs){
+            $tag_3 = $tag_3_rs['Subject'];
+        }
+        
+
  
 
         $tag_1_ID = $tag_2_ID = $tag_3_ID = 0;
@@ -48,13 +55,17 @@
 
         if($_SERVER["REQUEST_METHOD"] == "POST")
         {
+            echo($_POST['author']);
+            
+
             $author_ID = mysqli_real_escape_string($dbconnect, $_POST['author']);
+            echo($author_ID);
             $quote = mysqli_real_escape_string($dbconnect, $_POST['quote']);
             $notes = mysqli_real_escape_string($dbconnect, $_POST['notes']);
             $tag_1 = mysqli_real_escape_string($dbconnect, $_POST['Subject_1']);
             $tag_2 = mysqli_real_escape_string($dbconnect, $_POST['Subject_2']);
             $tag_3 = mysqli_real_escape_string($dbconnect, $_POST['Subject_3']);
-            if($quote == "Please Type the quote here" ){
+            if($quote == "Please Type the quote here" || $quote == "" ){
                 $has_errors = "yes";
                 $quote_error = "error-text";
                 $quote_field = "form-error";
@@ -73,18 +84,15 @@
 
                 $editentry_sql = "UPDATE `quotes` 
                 SET `Author_ID` = '$author_ID', `Quote` = '$quote', `Notes` = '$notes', 
-                `Subject1_ID` = '$subject1_ID', `Subject2_ID` = '$subject2_ID', `Subject3_ID` = '$subject3_ID' 
+                `Subject1_ID` = '$subjectID_1', `Subject2_ID` = '$subjectID_2', `Subject3_ID` = '$subjectID_3' 
                 WHERE `quotes`.`ID` = $ID";
                 $editentry_query = mysqli_query($dbconnect,$editentry_sql);
-
                 $get_quote_sql = "SELECT * FROM `quotes` WHERE `Quote`= '$quote'";
                 $get_quote_query = mysqli_query($dbconnect,$get_quote_sql);
                 $get_quote_rs = mysqli_fetch_assoc($get_quote_query);
 
-                $quote_ID = $get_quote_rs['ID'];
-                $_SESSION['Quote_Success'] = $quote_ID;
-                echo($quote_ID);
-                echo($addentry_sql);
+                $_SESSION['Quote_Success'] = $ID;
+  
                 header("Location: index.php?page=editquote_success&quote_ID=".$quote_ID);
             }
         }
@@ -123,11 +131,12 @@ enctype="multipart/form-data">
             while($all_authors_rs = mysqli_fetch_assoc($all_authors_query))
         ?>
     </select>
+    <br /> <br />
     <div class="<?php echo $quote_error; ?>">
         This field can't be black
     </div>
 
-    <textarea class="add-field <?php echo $quote_field?>" name="quote" rows="6" ><?php echo $quote?></textarea>
+    <textarea class="add-field <?php echo $quote_field?>" name="quote" rows="6" placeholder="Please enter quote here"><?php echo $quote?></textarea>
     <br /> <br />
 
 
